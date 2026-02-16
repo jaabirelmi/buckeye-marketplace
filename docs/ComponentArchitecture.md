@@ -1,4 +1,4 @@
-#Atoms
+**Atoms**
 Button
 input
 text label
@@ -7,14 +7,14 @@ icon
 Verifed badge for users
 the price 
 
-#Molecules
+**Molecules**
 Search bar
 Filter dropdown
 the seller info
 the price display
 save button after compleation
 
-#Organisms
+**Organisms**
 Listing Card 
 image
 sellers info
@@ -24,10 +24,10 @@ price display
 Listing Grid:
 this just has a couple Listing cards
 
-#Template
+**Template**:
 Top we have Filter bar
 middle we have the listing grid
 bottom we have Load More button
 
-#page
+**page**
 The product catelog page.
