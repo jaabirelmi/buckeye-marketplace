@@ -1,55 +1,39 @@
 import { Link } from "react-router-dom";
 import type { Product } from "../../types/Product";
+import AddToCartButton from "../AddToCartButton/AddToCartButton";
 
-type ProductCardProps = {
+interface ProductCardProps {
   product: Product;
-};
+}
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const priceText =
-    product.price === 0 ? "Free" : `$${product.price.toFixed(2)}`;
-
   return (
-    <Link
-      to={`/products/${product.id}`}
+    <div
       style={{
-        textDecoration: "none",
-        color: "inherit",
-        display: "block",
-        width: "100%",
+        border: "1px solid #ddd",
+        borderRadius: "8px",
+        padding: "16px",
       }}
     >
-      <div
+      <img
+        src={product.imageUrl}
+        alt={product.title}
         style={{
-          border: "1px solid #ddd",
-          borderRadius: "10px",
-          padding: "12px",
-          background: "#fff",
-          color: "#111",
-          boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
           width: "100%",
-          boxSizing: "border-box",
+          height: "200px",
+          objectFit: "cover",
+          borderRadius: "8px",
         }}
-      >
-        <img
-          src={product.imageUrl}
-          alt={product.title}
-          style={{
-            width: "100%",
-            height: "160px",
-            objectFit: "cover",
-            borderRadius: "8px",
-            marginBottom: "8px",
-          }}
-        />
+      />
 
-        <h3 style={{ margin: "8px 0" }}>{product.title}</h3>
-        <p style={{ margin: "6px 0" }}>
-          <strong>{priceText}</strong>
-        </p>
-        <p style={{ margin: "6px 0" }}>Category: {product.category}</p>
-        <p style={{ margin: "6px 0" }}>Seller: {product.sellerName}</p>
+      <h2>{product.title}</h2>
+      <p>{product.description}</p>
+      <p>${product.price.toFixed(2)}</p>
+
+      <div style={{ display: "flex", gap: "12px", marginTop: "12px" }}>
+        <Link to={`/products/${product.id}`}>View Details</Link>
+        <AddToCartButton product={product} />
       </div>
-    </Link>
+    </div>
   );
 }

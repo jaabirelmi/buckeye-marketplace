@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import AddToCartButton from "../components/AddToCartButton/AddToCartButton";
 import type { Product } from "../types/Product";
 
 export default function ProductDetailPage() {
@@ -67,6 +68,10 @@ export default function ProductDetailPage() {
           <p><strong>Seller:</strong> {product.sellerName}</p>
           <p><strong>Posted:</strong> {new Date(product.postedDate).toLocaleDateString()}</p>
           <p><strong>ID:</strong> {product.id}</p>
+
+          <div style={{ marginTop: "20px" }}>
+            <AddToCartButton product={product} />
+          </div>
         </div>
       )}
     </div>

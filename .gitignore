@@ -1,0 +1,31 @@
+# Root build artifacts
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/dist-ssr/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local env / machine files
+*.local
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln.docstates
+
+# SQLite database optional
+# Uncomment this if you do NOT want to commit the db file
+# api/*.db
+
+# Images / misc temp files
+image.png

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ProductList from "../components/products/ProductList";
+
 import type { Product } from "../types/Product";
 
 export default function ProductListPage() {
@@ -33,7 +34,16 @@ export default function ProductListPage() {
 
   return (
   <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "20px" }}>
-    <h1>Buckeye Marketplace</h1>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "20px",
+      }}
+    >
+      <h1>Buckeye Marketplace</h1>
+    </div>
 
     {loading && <p>Loading products...</p>}
 

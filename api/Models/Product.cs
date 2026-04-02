@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace api.Models
 {
     public class Product
@@ -10,5 +12,8 @@ namespace api.Models
         public string SellerName { get; set; } = "";
         public DateTime PostedDate { get; set; }
         public string ImageUrl { get; set; } = "";
+
+        [JsonIgnore]
+        public List<CartItem> CartItems { get; set; } = new();
     }
 }
