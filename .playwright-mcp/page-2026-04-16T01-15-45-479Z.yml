@@ -1,0 +1,89 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - navigation [ref=e5]:
+      - link "Buckeye Marketplace" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e7]:
+        - link "Products" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "Cart (1)" [ref=e160] [cursor=pointer]:
+          - /url: /cart
+        - link "My Orders" [ref=e90] [cursor=pointer]:
+          - /url: /orders
+        - generic [ref=e91]: e2e_test_user_20260416_011500@test.com
+        - button "Logout" [ref=e92] [cursor=pointer]
+  - generic [ref=e93]:
+    - heading "Products" [level=1] [ref=e94]
+    - generic [ref=e95]:
+      - generic [ref=e96]:
+        - img "CSE 3241 Textbook" [ref=e97]
+        - heading "CSE 3241 Textbook" [level=2] [ref=e98]
+        - paragraph [ref=e99]: Used textbook in good condition.
+        - paragraph [ref=e100]: $35.00
+        - generic [ref=e101]:
+          - link "View Details" [ref=e102] [cursor=pointer]:
+            - /url: /products/1
+          - button "Add CSE 3241 Textbook to cart" [active] [ref=e103] [cursor=pointer]: Add to Cart
+      - generic [ref=e104]:
+        - img "Laptop Charger" [ref=e105]
+        - heading "Laptop Charger" [level=2] [ref=e106]
+        - paragraph [ref=e107]: Works perfectly and fits most Dell laptops.
+        - paragraph [ref=e108]: $18.00
+        - generic [ref=e109]:
+          - link "View Details" [ref=e110] [cursor=pointer]:
+            - /url: /products/2
+          - button "Add Laptop Charger to cart" [ref=e111] [cursor=pointer]: Add to Cart
+      - generic [ref=e112]:
+        - img "Biology Lab Goggles" [ref=e113]
+        - heading "Biology Lab Goggles" [level=2] [ref=e114]
+        - paragraph [ref=e115]: Barely used, clean and ready for lab.
+        - paragraph [ref=e116]: $12.00
+        - generic [ref=e117]:
+          - link "View Details" [ref=e118] [cursor=pointer]:
+            - /url: /products/3
+          - button "Add Biology Lab Goggles to cart" [ref=e119] [cursor=pointer]: Add to Cart
+      - generic [ref=e120]:
+        - img "General Chemistry Textbook" [ref=e121]
+        - heading "General Chemistry Textbook" [level=2] [ref=e122]
+        - paragraph [ref=e123]: Some highlighting but still in solid condition.
+        - paragraph [ref=e124]: $28.00
+        - generic [ref=e125]:
+          - link "View Details" [ref=e126] [cursor=pointer]:
+            - /url: /products/4
+          - button "Add General Chemistry Textbook to cart" [ref=e127] [cursor=pointer]: Add to Cart
+      - generic [ref=e128]:
+        - img "Mini Fridge" [ref=e129]
+        - heading "Mini Fridge" [level=2] [ref=e130]
+        - paragraph [ref=e131]: Works great, perfect for dorms or apartments.
+        - paragraph [ref=e132]: $80.00
+        - generic [ref=e133]:
+          - link "View Details" [ref=e134] [cursor=pointer]:
+            - /url: /products/5
+          - button "Add Mini Fridge to cart" [ref=e135] [cursor=pointer]: Add to Cart
+      - generic [ref=e136]:
+        - img "Desk Chair" [ref=e137]
+        - heading "Desk Chair" [level=2] [ref=e138]
+        - paragraph [ref=e139]: Comfortable chair for studying or gaming.
+        - paragraph [ref=e140]: $45.00
+        - generic [ref=e141]:
+          - link "View Details" [ref=e142] [cursor=pointer]:
+            - /url: /products/6
+          - button "Add Desk Chair to cart" [ref=e143] [cursor=pointer]: Add to Cart
+      - generic [ref=e144]:
+        - img "Microwave" [ref=e145]
+        - heading "Microwave" [level=2] [ref=e146]
+        - paragraph [ref=e147]: Small apartment microwave in good working condition.
+        - paragraph [ref=e148]: $30.00
+        - generic [ref=e149]:
+          - link "View Details" [ref=e150] [cursor=pointer]:
+            - /url: /products/7
+          - button "Add Microwave to cart" [ref=e151] [cursor=pointer]: Add to Cart
+      - generic [ref=e152]:
+        - img "Notebook Pack" [ref=e153]
+        - heading "Notebook Pack" [level=2] [ref=e154]
+        - paragraph [ref=e155]: Five unused notebooks for classes.
+        - paragraph [ref=e156]: $8.00
+        - generic [ref=e157]:
+          - link "View Details" [ref=e158] [cursor=pointer]:
+            - /url: /products/8
+          - button "Add Notebook Pack to cart" [ref=e159] [cursor=pointer]: Add to Cart

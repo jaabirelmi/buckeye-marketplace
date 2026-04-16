@@ -79,3 +79,48 @@ After using AI suggestions, I tested the project manually in both the frontend a
 - verifying status codes in Swagger
 - testing error handling when the backend was unavailable
 - checking the project against the milestone rubric before submission
+
+## Milestone 5 AI Usage
+
+### How AI Helped
+For Milestone 5, AI was used heavily as a project guide, debugging assistant, and testing helper. It helped me:
+- break the milestone into smaller parts
+- understand the rubric and protected endpoint requirements
+- set up authentication and role-based authorization
+- connect frontend authentication to the backend
+- build checkout, confirmation, order history, and admin flows
+- debug backend and frontend test setup issues
+- generate and refine backend unit tests, frontend tests, and a Playwright E2E flow
+- review the project against the milestone rubric before submission
+
+### Example Prompts Used
+- can you help me set up ASP.NET Core Identity and JWT auth without hardcoding secrets
+- can you help me protect the cart and order endpoints with authorize attributes
+- can you help me build login and register pages and connect them to the backend
+- can you help me make protected routes work in the frontend
+- can you help me create orders from the cart and clear the cart after checkout
+- can you help me build order history and order confirmation pages
+- can you help me build admin product CRUD and order status updates
+- can you help me add backend unit tests and one integration test
+- can you help me set up Vitest and React Testing Library for frontend tests
+- can you help me fix the frontend testing config when Vitest and Playwright conflict
+- can you help me use Copilot agent mode and Playwright MCP for the E2E happy path
+- can you help me document the testing evidence, AI usage, and security practices for submission
+
+### What I Rejected or Changed
+- I did not blindly accept all generated code. I reviewed it, pasted it into my project, tested it, and adjusted it when needed.
+- I rejected some test setup suggestions that would have hardcoded behavior or weakened the assignment requirements.
+- I corrected AI-generated selectors and testing setup when they did not match my actual frontend structure.
+- I kept the implementation aligned with my real project files, routes, and UI instead of accepting suggestions that did not fit my app.
+
+## Testing and Verification
+After using AI suggestions, I tested the project manually and automatically. This included:
+- registering and logging in users
+- verifying admin login and role-restricted behavior
+- testing protected endpoints in Swagger
+- testing cart access and order history with authenticated users
+- verifying checkout, confirmation, and order history in the frontend
+- running `dotnet test`
+- running `npm test -- --run`
+- running `npx playwright test`
+- checking the final project against the milestone rubric before submission

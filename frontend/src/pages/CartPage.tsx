@@ -71,7 +71,15 @@ export default function CartPage() {
         onClearCart={clearCart}
       />
 
-      <div style={{ marginTop: "16px" }}>
+      <div style={{ marginTop: "16px", display: "flex", gap: "16px", flexWrap: "wrap" }}>
+        <Link
+          to="/checkout"
+          className={styles.browseLink}
+          style={{ display: "inline-flex", alignItems: "center" }}
+        >
+          Proceed to Checkout
+        </Link>
+
         <Link
           to="/"
           className={styles.browseLink}

@@ -1,17 +1,19 @@
+using api.DTOs;
+using api.Data;
+using api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using api.Data;
-using api.DTOs;
-using api.Models;
+using System.Security.Claims;
 
 namespace api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class CartController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private const string HardcodedUserId = "student123";
 
         public CartController(AppDbContext context)
         {
@@ -22,7 +24,6 @@ namespace api.Controllers
         public async Task<ActionResult<CartResponse>> GetCart()
         {
             var cart = await GetOrCreateCartAsync();
-
             return Ok(MapCartResponse(cart));
         }
 
@@ -134,10 +135,17 @@ namespace api.Controllers
 
         private async Task<Cart> GetOrCreateCartAsync()
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                throw new UnauthorizedAccessException("User ID claim missing.");
+            }
+
             var cart = await _context.Carts
                 .Include(c => c.Items)
                 .ThenInclude(ci => ci.Product)
-                .FirstOrDefaultAsync(c => c.UserId == HardcodedUserId);
+                .FirstOrDefaultAsync(c => c.UserId == userId);
 
             if (cart != null)
             {
@@ -146,7 +154,7 @@ namespace api.Controllers
 
             cart = new Cart
             {
-                UserId = HardcodedUserId
+                UserId = userId
             };
 
             _context.Carts.Add(cart);

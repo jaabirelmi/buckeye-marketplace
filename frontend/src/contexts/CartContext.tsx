@@ -17,6 +17,7 @@ import {
   postAddToCart,
   putUpdateCartItem,
 } from "../services/cartApi";
+import { useAuthContext } from "./AuthContext";
 
 interface CartContextValue {
   state: CartState;
@@ -49,6 +50,7 @@ export function CartProvider({ children }: CartProviderProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const { isAuthenticated } = useAuthContext();
 
   function applyCartResponse(data: CartResponse) {
     dispatch({
@@ -65,6 +67,18 @@ export function CartProvider({ children }: CartProviderProps) {
   }
 
   async function refreshCart() {
+    if (!isAuthenticated) {
+      dispatch({
+        type: "SET_CART",
+        payload: {
+          items: [],
+        },
+      });
+      setError("");
+      setSuccess("");
+      return;
+    }
+
     try {
       setLoading(true);
       setError("");
@@ -83,6 +97,11 @@ export function CartProvider({ children }: CartProviderProps) {
     price: number;
     imageUrl?: string;
   }): Promise<boolean> {
+    if (!isAuthenticated) {
+      setError("Please log in to add items to your cart.");
+      return false;
+    }
+
     try {
       setError("");
       setSuccess("");
@@ -134,7 +153,7 @@ export function CartProvider({ children }: CartProviderProps) {
 
   useEffect(() => {
     refreshCart();
-  }, []);
+  }, [isAuthenticated]);
 
   const cartItemCount = useMemo(() => {
     return state.items.reduce((sum, item) => sum + item.quantity, 0);

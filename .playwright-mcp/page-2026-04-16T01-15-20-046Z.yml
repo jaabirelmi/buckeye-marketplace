@@ -1,0 +1,28 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - navigation [ref=e5]:
+      - link "Buckeye Marketplace" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e7]:
+        - link "Products" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "Cart (0)" [ref=e9] [cursor=pointer]:
+          - /url: /cart
+        - link "Login" [ref=e10] [cursor=pointer]:
+          - /url: /login
+        - link "Register" [active] [ref=e11] [cursor=pointer]:
+          - /url: /register
+  - generic [ref=e80]:
+    - heading "Register" [level=1] [ref=e81]
+    - generic [ref=e82]:
+      - generic [ref=e83]:
+        - text: Email
+        - textbox "Email" [ref=e84]
+      - generic [ref=e85]:
+        - text: Password
+        - textbox "Password" [ref=e86]
+      - button "Register" [ref=e87] [cursor=pointer]
+    - paragraph [ref=e88]:
+      - text: Already have an account?
+      - link "Login" [ref=e89] [cursor=pointer]:
+        - /url: /login

@@ -2,8 +2,19 @@ import type { CartResponse } from "../types/cart";
 
 const API_BASE_URL = "http://localhost:5206/api/cart";
 
+function getAuthHeaders(includeJson = false): HeadersInit {
+  const token = localStorage.getItem("auth_token");
+
+  return {
+    ...(includeJson ? { "Content-Type": "application/json" } : {}),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
+
 export async function fetchCart(): Promise<CartResponse> {
-  const response = await fetch(API_BASE_URL);
+  const response = await fetch(API_BASE_URL, {
+    headers: getAuthHeaders(),
+  });
 
   if (!response.ok) {
     throw new Error("Failed to load cart.");
@@ -15,9 +26,7 @@ export async function fetchCart(): Promise<CartResponse> {
 export async function postAddToCart(productId: number, quantity: number): Promise<CartResponse> {
   const response = await fetch(API_BASE_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getAuthHeaders(true),
     body: JSON.stringify({
       productId,
       quantity,
@@ -37,9 +46,7 @@ export async function putUpdateCartItem(
 ): Promise<CartResponse> {
   const response = await fetch(`${API_BASE_URL}/${cartItemId}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getAuthHeaders(true),
     body: JSON.stringify({
       quantity,
     }),
@@ -55,6 +62,7 @@ export async function putUpdateCartItem(
 export async function deleteCartItem(cartItemId: number): Promise<CartResponse> {
   const response = await fetch(`${API_BASE_URL}/${cartItemId}`, {
     method: "DELETE",
+    headers: getAuthHeaders(),
   });
 
   if (!response.ok) {
@@ -67,6 +75,7 @@ export async function deleteCartItem(cartItemId: number): Promise<CartResponse> 
 export async function deleteClearCart(): Promise<CartResponse> {
   const response = await fetch(`${API_BASE_URL}/clear`, {
     method: "DELETE",
+    headers: getAuthHeaders(),
   });
 
   if (!response.ok) {
