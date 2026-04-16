@@ -45,8 +45,3 @@ See: `AI Tool Usage.md`
 ## Local User Secrets Setup
 
 To run the API locally, set the JWT signing key in user secrets for the `api` project.
-
-Example command:
-`dotnet user-secrets set "Jwt:Key" "REPLACE_WITH_YOUR_LOCAL_KEY"`
-
-If grading requires the exact local key I used, I will provide it separately as requested.
