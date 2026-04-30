@@ -46,3 +46,7 @@ playwright/.cache/
 
 # Images / misc temp files
 image.png
+# Publish artifacts (never commit these)
+api/publish/
+api/publish-test/
+api/publish.zip
