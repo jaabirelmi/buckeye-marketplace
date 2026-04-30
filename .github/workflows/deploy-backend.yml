@@ -38,17 +38,21 @@ jobs:
 
       - name: Run tests
         working-directory: api.Tests
-        run: dotnet test --configuration Release --no-restore --verbosity normal
+        run: dotnet test --configuration Release --verbosity normal
 
       - name: Publish
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: dotnet publish --configuration Release --no-build --output ./publish
 
-      - name: Upload artifact
+      - name: Create deployment zip
+        working-directory: ${{ env.WORKING_DIRECTORY }}/publish
+        run: zip -r ../../deploy.zip .
+
+      - name: Upload zip artifact
         uses: actions/upload-artifact@v4
         with:
-          name: backend-publish
-          path: ${{ env.WORKING_DIRECTORY }}/publish
+          name: backend-deploy-zip
+          path: deploy.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -56,15 +60,14 @@ jobs:
     name: Deploy to Azure App Service
 
     steps:
-      - name: Download artifact
+      - name: Download zip artifact
         uses: actions/download-artifact@v4
         with:
-          name: backend-publish
-          path: ./publish
+          name: backend-deploy-zip
 
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
+      - name: Deploy zip to Azure Web App
+        uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./publish
+          package: deploy.zip
