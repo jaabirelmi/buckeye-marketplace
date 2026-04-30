@@ -1,0 +1,54 @@
+name: Backend API CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'api/**'
+      - 'api.Tests/**'
+      - '.github/workflows/deploy-backend.yml'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '10.0.x'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    name: Build & Test Backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore backend dependencies
+        working-directory: api
+        run: dotnet restore
+
+      - name: Build backend
+        working-directory: api
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run backend tests
+        working-directory: api.Tests
+        run: dotnet test --configuration Release --verbosity normal
+
+      - name: Verify backend publishes successfully
+        working-directory: api
+        run: dotnet publish --configuration Release --no-build --output ./publish
+
+      - name: Upload publish artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-publish-${{ github.sha }}
+          path: api/publish
+          retention-days: 7
