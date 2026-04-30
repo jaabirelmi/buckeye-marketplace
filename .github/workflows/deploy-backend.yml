@@ -1,0 +1,70 @@
+name: Deploy Backend API to Azure
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'api/**'
+      - '.github/workflows/deploy-backend.yml'
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: buckeye-api-jaabir
+  DOTNET_VERSION: '10.0.x'
+  WORKING_DIRECTORY: api
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    name: Build & Test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: dotnet restore
+
+      - name: Build
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run tests
+        working-directory: api.Tests
+        run: dotnet test --configuration Release --no-restore --verbosity normal
+
+      - name: Publish
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: dotnet publish --configuration Release --no-build --output ./publish
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-publish
+          path: ${{ env.WORKING_DIRECTORY }}/publish
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    name: Deploy to Azure App Service
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-publish
+          path: ./publish
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./publish
