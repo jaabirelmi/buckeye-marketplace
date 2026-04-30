@@ -41,8 +41,27 @@ builder.Services.AddSwaggerGen(options =>
 // Database provider switching: SQLite for local dev, SQL Server for production.
 // We detect the provider by inspecting the connection string. If it contains ".db"
 // (e.g. "Data Source=buckeye-marketplace.db"), use SQLite. Otherwise assume SQL Server.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? "Data Source=buckeye-marketplace.db";
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// In Azure App Service, write the SQLite database to /home which persists
+// across restarts and deployments. Locally, fall back to a relative path.
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    var isAzureAppService = !string.IsNullOrWhiteSpace(
+        Environment.GetEnvironmentVariable("WEBSITE_INSTANCE_ID"));
+
+    var dbPath = isAzureAppService
+        ? "/home/data/buckeye-marketplace.db"
+        : "buckeye-marketplace.db";
+
+    connectionString = $"Data Source={dbPath}";
+
+    // Ensure the /home/data directory exists in App Service
+    if (isAzureAppService)
+    {
+        Directory.CreateDirectory("/home/data");
+    }
+}
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
