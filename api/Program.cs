@@ -38,8 +38,31 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+// Database provider switching: SQLite for local dev, SQL Server for production.
+// We detect the provider by inspecting the connection string. If it contains ".db"
+// (e.g. "Data Source=buckeye-marketplace.db"), use SQLite. Otherwise assume SQL Server.
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? "Data Source=buckeye-marketplace.db";
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=buckeye-marketplace.db"));
+{
+    if (connectionString.Contains(".db", StringComparison.OrdinalIgnoreCase))
+    {
+        options.UseSqlite(connectionString,
+            sqlite => sqlite.MigrationsAssembly("api"));
+    }
+    else
+    {
+        options.UseSqlServer(connectionString,
+            sql => sql.MigrationsAssembly("api"));
+    }
+
+    // Suppress the "pending model changes" warning. We intentionally maintain
+    // separate migration sets for SQLite (local dev) and SQL Server (production),
+    // so the model snapshot will always show as out of sync with one of them.
+    options.ConfigureWarnings(warnings =>
+        warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+});
 
 builder.Services
     .AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -57,7 +80,7 @@ builder.Services
 var jwtKey = builder.Configuration["Jwt:Key"];
 if (string.IsNullOrWhiteSpace(jwtKey))
 {
-    throw new InvalidOperationException("JWT signing key is missing. Set it with user-secrets.");
+    throw new InvalidOperationException("JWT signing key is missing. Set it with user-secrets or environment variables.");
 }
 
 builder.Services
@@ -80,12 +103,18 @@ builder.Services
 
 builder.Services.AddAuthorization();
 
+// CORS origins are read from configuration. Locally this is appsettings.json.
+// In production, Azure App Service will provide them via the Cors__AllowedOrigins__0
+// environment variable (note the double underscore for nested config).
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? new[] { "http://localhost:5173" };
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173")
+            policy.WithOrigins(allowedOrigins)
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
@@ -162,7 +191,13 @@ if (!app.Environment.IsEnvironment("Testing"))
     }
 }
 
-app.UseHttpsRedirection();
+// Only redirect to HTTPS in development. In production, Azure App Service
+// terminates HTTPS at the load balancer and forwards plain HTTP internally.
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseCors("AllowFrontend");
 
 app.UseAuthentication();

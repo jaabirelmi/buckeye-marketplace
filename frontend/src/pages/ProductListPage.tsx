@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import ProductList from "../components/products/ProductList";
 import type { Product } from "../types/Product";
 
+const PRODUCTS_URL = `${import.meta.env.VITE_API_BASE_URL}/products`;
+
 export default function ProductListPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -13,7 +15,7 @@ export default function ProductListPage() {
         setLoading(true);
         setError("");
 
-        const response = await fetch("http://localhost:5206/api/products");
+        const response = await fetch(PRODUCTS_URL);
 
         if (!response.ok) {
           throw new Error("Failed to load products.");

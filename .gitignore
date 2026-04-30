@@ -23,9 +23,26 @@ pnpm-debug.log*
 *.njsproj
 *.sln.docstates
 
-# SQLite database optional
-# Uncomment this if you do NOT want to commit the db file
-# api/*.db
+# Environment files - never commit secrets
+.env
+.env.local
+.env.*.local
+# But DO commit the templates that don't contain secrets
+!.env.development
+!.env.production
+
+# SQLite local database (development only - production uses Azure SQL)
+api/*.db
+api/*.db-journal
+
+# Azure & deployment artifacts
+*.PublishSettings
+publish/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
 
 # Images / misc temp files
 image.png

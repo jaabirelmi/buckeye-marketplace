@@ -1,8 +1,8 @@
 import type { Product } from "../types/Product";
 import type { OrderResponse } from "../types/order";
 
-const PRODUCTS_URL = "http://localhost:5206/api/products";
-const ORDERS_URL = "http://localhost:5206/api/orders";
+const PRODUCTS_URL = `${import.meta.env.VITE_API_BASE_URL}/products`;
+const ORDERS_URL = `${import.meta.env.VITE_API_BASE_URL}/orders`;
 
 function getAuthHeaders(includeJson = false): HeadersInit {
   const token = localStorage.getItem("auth_token");

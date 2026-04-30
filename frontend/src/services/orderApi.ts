@@ -1,6 +1,6 @@
 import type { OrderResponse } from "../types/order";
 
-const API_BASE_URL = "http://localhost:5206/api/orders";
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/orders`;
 
 function getAuthHeaders(includeJson = false): HeadersInit {
   const token = localStorage.getItem("auth_token");

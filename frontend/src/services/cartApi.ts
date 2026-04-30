@@ -1,6 +1,6 @@
 import type { CartResponse } from "../types/cart";
 
-const API_BASE_URL = "http://localhost:5206/api/cart";
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/cart`;
 
 function getAuthHeaders(includeJson = false): HeadersInit {
   const token = localStorage.getItem("auth_token");

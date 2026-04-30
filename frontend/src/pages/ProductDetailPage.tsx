@@ -3,6 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import AddToCartButton from "../components/AddToCartButton/AddToCartButton";
 import type { Product } from "../types/Product";
 
+const PRODUCTS_URL = `${import.meta.env.VITE_API_BASE_URL}/products`;
+
 export default function ProductDetailPage() {
   const { id } = useParams();
   const [product, setProduct] = useState<Product | null>(null);
@@ -15,7 +17,7 @@ export default function ProductDetailPage() {
         setLoading(true);
         setError("");
 
-        const response = await fetch(`http://localhost:5206/api/products/${id}`);
+        const response = await fetch(`${PRODUCTS_URL}/${id}`);
 
         if (response.status === 404) {
           setError("Product not found.");
