@@ -15,9 +15,9 @@ env:
   WORKING_DIRECTORY: api
 
 jobs:
-  build-and-test:
+  build-test-deploy:
     runs-on: ubuntu-latest
-    name: Build & Test
+    name: Build, Test, and Deploy
 
     steps:
       - name: Checkout code
@@ -48,26 +48,31 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}/publish
         run: zip -r ../../deploy.zip .
 
-      - name: Upload zip artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend-deploy-zip
-          path: deploy.zip
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build-and-test
-    name: Deploy to Azure App Service
-
-    steps:
-      - name: Download zip artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: backend-deploy-zip
-
-      - name: Deploy zip to Azure Web App
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: deploy.zip
+      - name: Deploy to Azure via Kudu zip-deploy
+        env:
+          PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        run: |
+          # Extract username and password from MSDeploy profile in the publish profile XML
+          USERNAME=$(echo "$PUBLISH_PROFILE" | grep -oP 'userName="\$[^"]+"' | head -1 | sed 's/userName="//;s/"//')
+          PASSWORD=$(echo "$PUBLISH_PROFILE" | grep -oP 'userPWD="[^"]+"' | head -1 | sed 's/userPWD="//;s/"//')
+          
+          # Deploy zip using Kudu API (the same endpoint Azure CLI uses internally)
+          echo "Deploying to ${AZURE_WEBAPP_NAME}..."
+          
+          HTTP_CODE=$(curl -X POST \
+            -u "$USERNAME:$PASSWORD" \
+            --data-binary @deploy.zip \
+            -H "Content-Type: application/zip" \
+            -o response.txt \
+            -w "%{http_code}" \
+            "https://${AZURE_WEBAPP_NAME}.scm.azurewebsites.net/api/zipdeploy?isAsync=false")
+          
+          echo "HTTP Status: $HTTP_CODE"
+          cat response.txt
+          
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "✅ Deployment successful"
+          else
+            echo "❌ Deployment failed with status $HTTP_CODE"
+            exit 1
+          fi
