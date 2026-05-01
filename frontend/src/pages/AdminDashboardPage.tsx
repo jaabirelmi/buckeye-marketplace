@@ -9,6 +9,8 @@ import {
   updateProduct,
 } from "../services/adminApi";
 
+const PRODUCTS_URL = `${import.meta.env.VITE_API_BASE_URL}/products`;
+
 export default function AdminDashboardPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<OrderResponse[]>([]);
@@ -31,7 +33,7 @@ export default function AdminDashboardPage() {
         setError("");
 
         const [productsResponse, ordersData] = await Promise.all([
-          fetch("http://localhost:5206/api/products"),
+          fetch(PRODUCTS_URL),
           fetchAllOrders(),
         ]);
 
@@ -49,7 +51,7 @@ export default function AdminDashboardPage() {
 
   async function reloadProducts() {
     try {
-      const response = await fetch("http://localhost:5206/api/products");
+      const response = await fetch(PRODUCTS_URL);
       const data: Product[] = await response.json();
       setProducts(data);
     } catch {
