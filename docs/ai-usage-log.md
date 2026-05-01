@@ -124,3 +124,71 @@ After using AI suggestions, I tested the project manually and automatically. Thi
 - running `npm test -- --run`
 - running `npx playwright test`
 - checking the final project against the milestone rubric before submission
+
+## Milestone 6 AI Usage
+
+### How AI Helped
+
+For Milestone 6, AI was used as the primary deployment partner, debugger, and documentation drafter. The deployment phase was by far the highest-risk part of the entire project, and AI assistance was crucial in:
+
+- Walking through Azure resource creation step-by-step (resource group, App Service plan, App Service, Static Web App)
+- Diagnosing cryptic Azure errors and translating them into concrete fixes
+- Designing pragmatic fallbacks when Azure for Students subscription policies blocked the rubric's stated approach (Azure SQL Database, F1 free tier quotas, etc.)
+- Drafting and iterating on GitHub Actions CI/CD workflows
+- Writing comprehensive technical documentation in a single sitting that would otherwise have taken much longer
+
+### Example Prompts Used
+
+- can you help me plan out how to deploy this whole thing to Azure step by step
+- I'm getting RegionDoesNotAllowProvisioning when creating a SQL server, what regions should I try
+- the Azure CLI says my subscription has policy restrictions, what does that mean and what are my options
+- how do I deploy a .NET 10 zip to Azure App Service when webapps-deploy keeps failing with "Failed to get app runtime OS"
+- the deployment log says "Invalid argument: /home/site/wwwroot/runtimes\linux-musl-x64\..." what does this mean
+- can you help me make the SQLite path persistent on Azure App Service so it survives restarts
+- can you help me write a GitHub Actions workflow that runs my dotnet tests and deploys to App Service
+- can you help me update the frontend to use an environment variable for the API URL instead of hardcoding localhost
+- the admin dashboard says "Could not load admin dashboard data" on production but works locally, what's wrong
+- can you write a comprehensive README that hits every requirement on the M6 rubric
+- can you draft an AI reflection document that's specific to my actual project rather than generic
+- I lost my terminal/PC restarted, did I lose any work
+- when do I commit so I have a save state to revert to if something breaks
+
+### Key AI-Assisted Debugging Wins
+
+1. **Linux zip deployment failure.** The deployment log showed `rsync error: Invalid argument '/home/site/wwwroot/runtimes\linux-musl-x64\native\libe_sqlite3.so'`. AI immediately recognized this as a Windows-vs-Linux path separator issue caused by PowerShell's `Compress-Archive` writing zip entries with backslashes. The fix — using `[System.IO.Compression.ZipFile]` directly and explicitly normalizing entry paths to forward slashes — was a five-line change that unblocked deployment after multiple failed attempts.
+
+2. **Azure SQL provisioning policy block.** When `az sql server create` failed with `RequestDisallowedByAzure` across multiple regions, AI suggested checking the Azure portal's region dropdown directly (which only shows regions the subscription is allowed to use) and, when that confirmed a hard policy block, immediately pivoted to a SQLite-on-`/home/data/` plan rather than burning more time on regions.
+
+3. **Production-only admin dashboard bug.** After deploying, the admin dashboard failed to load data on production but worked locally. The browser console showed `localhost:5206` connection refused — instantly identifiable as a hardcoded URL that was missed during the env-var refactor. AI located the two `fetch()` calls in `AdminDashboardPage.tsx`, replaced them with the `VITE_API_BASE_URL`-based URL, and the issue was fixed and deployed in under five minutes.
+
+4. **F1 quota block + B1 upgrade.** When the App Service silently entered a "QuotaExceeded" state after several failed deployment attempts blew through the F1 tier's 60-minute daily CPU quota, AI explained what was happening, that B1 cost cents-per-hour against the student credit (no actual money), and walked through the upgrade in a single command.
+
+### What I Rejected or Changed
+
+- AI initially suggested a "two providers, one EF migration set" approach for SQL Server vs. SQLite. After watching that strategy generate model snapshot conflicts that broke local development, I worked with AI to revert it and use a simpler approach: SQLite migrations only, with the SQL Server provider available in code but not used.
+- AI suggested service-principal authentication for the GitHub Actions backend deploy. After the OSU Azure tenant rejected `az ad sp create-for-rbac` with "Insufficient privileges to complete the operation," I made the call to drop auto-deploy on the backend and document the manual deploy script instead. AI agreed and drafted that documentation rather than spending more time looking for workarounds.
+- I rejected several iterations of the deployment workflow that were technically valid but would have required additional Azure infrastructure (Azure Container Registry, etc.) — the rubric points didn't justify the complexity.
+
+### What I Did Without AI
+
+- Made every "stop chasing this and pivot" decision based on time remaining vs. rubric impact
+- Manually tested every user flow on the live production site after every fix and confirmed functional correctness end-to-end
+- Caught and fixed bugs AI didn't surface (e.g. when CORS needed updating to the real Static Web App URL after the placeholder)
+- Made the call to upgrade to B1 specifically (vs. continuing to fight F1 quotas)
+- Final review of every documentation file before committing — including this one
+
+### Testing and Verification
+
+After each change in M6, the following were checked:
+
+- The live frontend loads at the production Static Web Apps URL
+- The live backend serves products at `/api/products` over HTTPS
+- Authentication works end-to-end on the deployed environment (register, login, JWT in subsequent requests)
+- Cart, checkout, and order history work on the deployed environment as a regular user
+- Admin product CRUD and order status updates work on the deployed environment as the admin user
+- `dotnet test` and `npm test -- --run` continue to pass on the latest code (`docs/test-evidence-backend.txt`, `docs/test-evidence-frontend.txt`)
+- Both GitHub Actions workflows run green on push to `main`
+
+### Reflection on AI-Assisted Development
+
+The biggest lesson from M6 was that AI is most valuable not as a code generator but as a debugging partner who has read every Stack Overflow thread on Azure errors. The Azure deployment phase had at least six different cryptic failure modes, and the time-to-fix on each was dramatically lower with AI than it would have been alone. The flip side is that AI is willing to keep trying, sometimes past the point where the human should have stopped and pivoted; the human's job in this collaboration was to call those pivots and protect the deadline.
